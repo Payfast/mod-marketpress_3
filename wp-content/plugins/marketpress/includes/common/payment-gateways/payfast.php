@@ -297,7 +297,7 @@ class MP_Gateway_PayFast extends MP_Gateway_API
             $getString .= substr( $pfOutputSig, 0, -1 );
         }
 
-        $pfOutput = $pfOutputSig .'signature='.md5($getString);
+        $pfOutput = $pfOutputSig .'signature='.md5($getString) .'&user_agent=MarketPress 3.x';
 
         $order = new MP_Order( $orderId );
         $order->save( array(
