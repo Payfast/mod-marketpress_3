@@ -225,7 +225,7 @@ class MP_Gateway_PayFast extends MP_Gateway_API
         $timestamp = time();
         $orderId = mp()->generate_order_id();
 
-        $returnURL = $this->returnURL = mp_checkout_step_url( 'confirm-checkout' );
+        $returnURL = $this->returnURL = mp_checkout_step_url( 'checkout' ) . "?success=1";
         $cancelURL = $this->cancelURL = mp_checkout_step_url( 'checkout' ) . "?cancel=1";
 
         $selected_cart = $global_cart;
