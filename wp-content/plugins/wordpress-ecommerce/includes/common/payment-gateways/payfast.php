@@ -71,6 +71,8 @@ class MP_Gateway_PayFast extends MP_Gateway_API
         {
             $this->payfastURL = 'https://www.payfast.co.za/eng/process';
         }
+        // Set passphrase //
+        $this->passphrase = $this->get_setting('payfast_credentials->passphrase');
     }
 
     /**
@@ -287,7 +289,7 @@ class MP_Gateway_PayFast extends MP_Gateway_API
             }
         }
 
-        if ( !empty( $this->get_setting('payfast_credentials->passphrase') ) && $this->SandboxFlag == 'live' )
+        if ( !empty( $this->passphrase ) && $this->SandboxFlag == 'live' )
         {
             $getString .= $pfOutputSig.'passphrase='.urlencode( $this->get_setting('payfast_credentials->passphrase') );
         }
@@ -344,7 +346,7 @@ class MP_Gateway_PayFast extends MP_Gateway_API
         $pfErrMsg = '';
         $pfDone = false;
         $pfData = array();
-        $pfHost = ( $this->test_mode ? 'www' : 'sandbox') . '.payfast.co.za';
+        $pfHost = ( ( $this->SandboxFlag == 'sandbox' ) ? 'sandbox' : 'www') . '.payfast.co.za';
         $pfOrderId = '';
         $pfParamString = '';
 
@@ -380,7 +382,7 @@ class MP_Gateway_PayFast extends MP_Gateway_API
         {
             pflog( 'Verify security signature' );
 
-            $pfPassPhrase = !empty( $this->passphrase ) && !$this->test_mode ? $this->passphrase : null;
+            $pfPassPhrase = !empty( $this->passphrase ) && $this->SandboxFlag == 'live' ? $this->passphrase : null;
 
             // If signature different, log for debugging
             if ( !pfValidSignature( $pfData, $pfParamString, $pfPassPhrase ) )

@@ -5,7 +5,7 @@ PayFast Marketpress Module v3.0
 
 INTEGRATION:
 1. Unzip the module to a temporary location on your computer
-2. Copy the “wp-content” folder in the archive to your base “wordpress” foldern
+2. Copy the “wp-content” folder in the archive to your base “wordpress” folder
 - This should NOT overwrite any existing files or folders and merely supplement them with the PayFast files
 - This is however, dependent on the FTP program you use
 3. Login to the WordPress Administrator console

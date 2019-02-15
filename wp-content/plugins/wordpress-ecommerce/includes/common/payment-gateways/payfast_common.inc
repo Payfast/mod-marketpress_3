@@ -9,7 +9,7 @@
 define( 'PF_SOFTWARE_NAME', 'MarketPress' );
 define( 'PF_SOFTWARE_VER', WPSC_PRESENTABLE_VERSION );
 define( 'PF_MODULE_NAME', 'PayFast-MarketPress' );
-define( 'PF_MODULE_VER', '1.1' );
+define( 'PF_MODULE_VER', '1.1.1' );
 
 // Features
 // - PHP
@@ -25,7 +25,7 @@ if( in_array( 'curl', get_loaded_extensions() ) )
 else
     $pfFeatures .= ' nocurl;';
 
-// Create user agrent
+// Create user agent
 define( 'PF_USER_AGENT', PF_SOFTWARE_NAME .'/'. PF_SOFTWARE_VER .' ('. trim( $pfFeatures ) .') '. PF_MODULE_NAME .'/'. PF_MODULE_VER );
 
 // General Defines
@@ -189,7 +189,7 @@ function pfValidData( $pfHost = 'www.payfast.co.za', $pfParamString = '', $pfPro
         // Create default cURL object
         $ch = curl_init();
     
-        // Set cURL options - Use curl_setopt for freater PHP compatibility
+        // Set cURL options - Use curl_setopt for greater PHP compatibility
         // Base settings
         curl_setopt( $ch, CURLOPT_USERAGENT, PF_USER_AGENT );  // Set user agent
         curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );      // Return output as string rather than outputting it
