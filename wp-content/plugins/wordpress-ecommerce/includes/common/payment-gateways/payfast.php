@@ -71,7 +71,7 @@ class MP_Gateway_PayFast extends MP_Gateway_API
         {
             $this->payfastURL = 'https://www.payfast.co.za/eng/process';
         }
-        // Set passphrase //
+        // Set passphrase
         $this->passphrase = $this->get_setting('payfast_credentials->passphrase');
     }
 
@@ -227,9 +227,6 @@ class MP_Gateway_PayFast extends MP_Gateway_API
         $timestamp = time();
         $orderId = mp()->generate_order_id();
 
-        $returnURL = $this->returnURL = mp_checkout_step_url( 'checkout' ) . "?success=1";
-        $cancelURL = $this->cancelURL = mp_checkout_step_url( 'checkout' ) . "?cancel=1";
-
         $selected_cart = $global_cart;
         $settings = get_site_option( 'mp_network_settings' );
 
@@ -270,6 +267,26 @@ class MP_Gateway_PayFast extends MP_Gateway_API
 
         $pfAmount = $total;
 
+        $order = new MP_Order( $orderId );
+        $order->save( array(
+            'payment_info' => array(
+                'gateway_public_name' => $this->public_name,
+                'gateway_private_name' => $this->admin_name,
+                'status' => array(
+                    $timestamp => __( 'Received', 'mp' ),
+                ),
+                'total' => $cart->total(),
+                'currency' => $this->currencyCode,
+                'transaction_id' => $orderId,
+                'method' => __( 'PayFast', 'mp' ),
+            ),
+            'cart' => mp_cart(),
+            'paid' => false,
+        ) );
+
+        $returnURL = $order->tracking_url( false );
+        $cancelURL = $this->cancelURL = mp_checkout_step_url( 'checkout' ) . "?cancel=1";
+
         // Construct variables for post
         $data = array(
             'merchant_id' => ( $this->SandboxFlag == 'sandbox' ? '10000100' : $this->get_setting( 'payfast_credentials->merchant_id' ) ),
@@ -300,23 +317,6 @@ class MP_Gateway_PayFast extends MP_Gateway_API
         }
 
         $pfOutput = $pfOutputSig .'signature='.md5($getString) .'&user_agent=MarketPress 3.x';
-
-        $order = new MP_Order( $orderId );
-        $order->save( array(
-            'payment_info' => array(
-                'gateway_public_name' => $this->public_name,
-                'gateway_private_name' => $this->admin_name,
-                'status' => array(
-                    $timestamp => __( 'Received', 'mp' ),
-                ),
-                'total' => $cart->total(),
-                'currency' => $this->currencyCode,
-                'transaction_id' => $orderId,
-                'method' => __( 'PayFast', 'mp' ),
-            ),
-            'cart' => mp_cart(),
-            'paid' => false,
-        ) );
 
         header("Location: " . $payfastUrl . "?" . $pfOutput);
         exit(0);
@@ -353,14 +353,14 @@ class MP_Gateway_PayFast extends MP_Gateway_API
 
         pflog('PayFast ITN call received');
 
-        //// Notify PayFast that information has been received
+        // Notify PayFast that information has been received
         if ( !$pfError && !$pfDone )
         {
             header( 'HTTP/1.0 200 OK' );
             flush();
         }
 
-        //// Get data sent by PayFast
+        // Get data sent by PayFast
         if ( !$pfError && !$pfDone )
         {
             pflog( 'Get posted data' );
@@ -377,7 +377,7 @@ class MP_Gateway_PayFast extends MP_Gateway_API
             }
         }
 
-        //// Verify security signature
+        // Verify security signature
         if ( !$pfError && !$pfDone )
         {
             pflog( 'Verify security signature' );
@@ -392,7 +392,7 @@ class MP_Gateway_PayFast extends MP_Gateway_API
             }
         }
 
-        //// Verify source IP (If not in debug mode)
+        // Verify source IP (If not in debug mode)
         if ( !$pfError && !$pfDone && !PF_DEBUG )
         {
             pflog( 'Verify source IP' );
@@ -404,7 +404,7 @@ class MP_Gateway_PayFast extends MP_Gateway_API
             }
         }
 
-        //// Get internal order and verify it hasn't already been processed
+        // Get internal order and verify it hasn't already been processed
         if( !$pfError && !$pfDone )
         {
             // Get order data
@@ -422,7 +422,7 @@ class MP_Gateway_PayFast extends MP_Gateway_API
             }
         }
 
-        //// Verify data received
+        // Verify data received
         if ( !$pfError )
         {
             pflog( 'Verify data received' );
@@ -436,7 +436,7 @@ class MP_Gateway_PayFast extends MP_Gateway_API
             }
         }
 
-        //// Check status and update order
+        // Check status and update order
         if ( !$pfError && !$pfDone )
         {
             pflog( 'Check status and update order ');
@@ -503,5 +503,5 @@ class MP_Gateway_PayFast extends MP_Gateway_API
             return urldecode( $name );
         }
 }
-//register gateway plugin
+        // Register gateway plugin
         mp_register_gateway_plugin( 'MP_Gateway_PayFast', 'payfast', __( 'PayFast', 'mp' ), true );

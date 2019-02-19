@@ -9,7 +9,7 @@
 define( 'PF_SOFTWARE_NAME', 'MarketPress' );
 define( 'PF_SOFTWARE_VER', WPSC_PRESENTABLE_VERSION );
 define( 'PF_MODULE_NAME', 'PayFast-MarketPress' );
-define( 'PF_MODULE_VER', '1.1.1' );
+define( 'PF_MODULE_VER', '1.1.2' );
 
 // Features
 // - PHP
